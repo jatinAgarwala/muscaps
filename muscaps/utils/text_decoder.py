@@ -6,7 +6,7 @@ class TextDecoder():
         self._vocab = vocab
         self._vocab_size = vocab.get_size()
         self._config = config.model_config
-        self._device = torch.device(config.training.device)
+        self._device = torch.device(config.model_config.device)
         self.max_steps = self._config.max_caption_len
 
     def decode_caption(self, caption):

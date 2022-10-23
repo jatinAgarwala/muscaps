@@ -46,7 +46,7 @@ class Captioning(Evaluation):
             self.logger.write("Predicting captions")
 
             with torch.no_grad():
-                for i, batch in enumerate(tqdm(self.test_loader)):
+                for i, batch in enumerate(tqdm(self.test_loader, desc="Predicting batches")):
                     audio, audio_len, true_caption, x_len = batch
 
                     # predict and decode caption

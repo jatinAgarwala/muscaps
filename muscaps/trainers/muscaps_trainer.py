@@ -15,13 +15,14 @@ from muscaps.models.cnn_lstm_caption import CNNLSTMCaption
 from muscaps.models.cnn_attention_lstm import AttentionModel
 from muscaps.trainers.base_trainer import BaseTrainer
 
+from tqdm import tqdm
 
 class MusCapsTrainer(BaseTrainer):
     def __init__(self, config, logger):
         super(BaseTrainer, self).__init__()
         self.config = config
         self.logger = logger
-        self.device = torch.device(self.config.training.device)
+        self.device = torch.device(config.training.device)
         self.patience = self.config.training.patience
         self.lr = self.config.training.lr
 
@@ -33,13 +34,13 @@ class MusCapsTrainer(BaseTrainer):
     def load_dataset(self):
         self.logger.write("Loading dataset")
         dataset_name = self.config.dataset_config.dataset_name
-        if dataset_name == "audiocaption":
-            train_dataset = AudioCaptionDataset(self.config.dataset_config)
-            val_dataset = AudioCaptionDataset(
-                self.config.dataset_config, "val")
-        else:
-            raise ValueError(
-                "{} dataset is not supported.".format(dataset_name))
+        # if dataset_name == "uiums_dataset":
+        train_dataset = AudioCaptionDataset(self.config.dataset_config)
+        val_dataset = AudioCaptionDataset(
+            self.config.dataset_config, "val")
+        # else:
+        #     raise ValueError(
+        #         "{} dataset is not supported.".format(dataset_name))
         self.vocab = train_dataset.vocab
         self.logger.save_vocab(self.vocab.token_freq)
         OmegaConf.update(self.config, "model_config.vocab_size",
@@ -122,7 +123,7 @@ class MusCapsTrainer(BaseTrainer):
         k_patience = 0
         best_val = np.Inf
 
-        for epoch in range(self.start_epoch, self.config.training.epochs):
+        for epoch in tqdm(range(self.start_epoch, self.config.training.epochs), desc="Training epochs"):
             epoch_start_time = time.time()
 
             train_loss = self.train_epoch(
@@ -162,7 +163,7 @@ class MusCapsTrainer(BaseTrainer):
                                         is_best=is_val_improving)
 
     def load_ckp(self, checkpoint_path):
-        checkpoint = torch.load(checkpoint_path)
+        checkpoint = torch.load(checkpoint_path, map_location=self.config.training.device)
         self.model.load_state_dict(checkpoint['state_dict'])
         self.optimizer.load_state_dict(checkpoint['optimizer'])
         self.start_epoch = checkpoint['epoch']
@@ -182,7 +183,7 @@ class MusCapsTrainer(BaseTrainer):
         else:
             self.model.eval()
 
-        for i, batch in enumerate(data_loader):
+        for i, batch in enumerate(tqdm(data_loader, desc="Training batches")):
             audio, audio_len, x, x_len = batch
             target_list.append(x)
             audio = audio.float().to(device=device)
