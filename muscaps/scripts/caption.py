@@ -3,6 +3,7 @@ import torch
 from omegaconf import OmegaConf
 import json
 from tqdm import tqdm
+from icecream import ic
 import argparse
 
 from muscaps.scripts.eval import Evaluation
@@ -38,6 +39,8 @@ class Captioning(Evaluation):
         if os.path.exists(self.predictions_path):
             predictions, true_captions, audio_paths = json.load(
                 open(self.predictions_path)).values()
+            ic(predictions)
+            ic(true_captions)
         else:
             predictions = []
             true_captions = []
@@ -56,10 +59,14 @@ class Captioning(Evaluation):
                         pred_caption)
                     predictions.append(pred_caption_decoded)
 
+                    ic(pred_caption_decoded)
+
                     # decode target caption
                     true_caption_decoded = self.text_decoder.decode_caption(
-                        true_caption.cpu().tolist()[0])
+                        true_caption.to(device=self.device).tolist()[0])
                     true_captions.append([true_caption_decoded])
+
+                    ic(true_caption_decoded)
 
                     audio_path = self.test_loader.dataset.audio_paths[i]
                     audio_paths.append(audio_path)

@@ -1,6 +1,6 @@
  model_config: 
   model_name: cnn_attention_lstm
-  device: 'cpu'
+  device: 'cuda'
   fusion: early
   loss: cross_entropy
   # Feature Extraction

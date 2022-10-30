@@ -3,6 +3,7 @@ import torch.nn as nn
 
 from muscaps.modules.decoders import LSTMDecoder
 from muscaps.modules.encoders import CNNEncoder, WordEmbeddingEncoder, LSTMEncoder
+from icecream import ic
 
 
 class CNNLSTMCaption(nn.Module):

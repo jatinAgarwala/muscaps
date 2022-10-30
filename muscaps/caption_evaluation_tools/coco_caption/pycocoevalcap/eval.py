@@ -11,6 +11,7 @@ from .meteor.meteor import Meteor
 from .rouge.rouge import Rouge
 from .cider.cider import Cider
 from .spice.spice import Spice
+from icecream import ic
 import numpy as np
 
 
@@ -48,7 +49,7 @@ class COCOEvalCap:
             print('setting up scorers...')
         scorers = [(Bleu(4), ["Bleu_1", "Bleu_2", "Bleu_3", "Bleu_4"]),
                    (Meteor(), "METEOR"), (Rouge(), "ROUGE_L"),
-                   (Cider(), "CIDEr"), (Spice(), "SPICE")]
+                   (Cider(), "CIDEr")]
 
         # =================================================
         # Compute scores
@@ -72,17 +73,17 @@ class COCOEvalCap:
         # Compute SPIDEr metric (average of CIDEr and SPICE)
         if verbose:
             print('computing %s score...' % ('SPIDEr'))
-        score = (self.eval['CIDEr'] + self.eval['SPICE']) / 2.
-        scores = list(
-            (np.array([audio['CIDEr']
-                       for audio in self.audioToEval.values()]) + np.array([
-                           audio['SPICE']['All']['f']
-                           for audio in self.audioToEval.values()
-                       ])) / 2)
-        self.setEval(score, 'SPIDEr')
-        self.setAudioToEvalAudios(scores, gts.keys(), 'SPIDEr')
-        if verbose:
-            print("%s: %0.3f" % ('SPIDEr', score))
+        # score = (self.eval['CIDEr'] + self.eval['SPICE']) / 2.
+        # scores = list(
+        #     (np.array([audio['CIDEr']
+        #                for audio in self.audioToEval.values()]) + np.array([
+        #                    audio['SPICE']['All']['f']
+        #                    for audio in self.audioToEval.values()
+        #                ])) / 2)
+        # self.setEval(score, 'SPIDEr')
+        # self.setAudioToEvalAudios(scores, gts.keys(), 'SPIDEr')
+        # if verbose:
+        #     print("%s: %0.3f" % ('SPIDEr', score))
 
         self.setEvalAudios()
 

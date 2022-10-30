@@ -3,15 +3,15 @@ training:
   # Experiment id to use in logging and checkpoints
   experiment_id: null
   # Maximum number of epochs
-  epochs: 1
+  epochs: 10
   # Device to be used to train the model. Can be "cuda" or "cpu"
-  device: cpu
+  device: cuda
   # Optimizer configuration
   optimizer: adam
   # Learning rate
-  lr: 0.0001
+  lr: 0.001
   patience: 5
-  batch_size: 8
+  batch_size: 16
   # Number of workers to be used in dataloader
   num_workers: 4
   # Whether to shuffle in dataloader
